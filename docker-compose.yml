@@ -1,0 +1,44 @@
+version: '3.4'
+
+services:
+  app1:
+    image: ${DOCKER_REGISTRY-}app1
+    build:
+      context: .
+      dockerfile: app1/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - VIRTUAL_HOST=app1.local
+    ports:
+      - "6001:80"
+
+  app2:
+    image: ${DOCKER_REGISTRY-}app2
+    build:
+      context: .
+      dockerfile: app2/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - VIRTUAL_HOST=app2.local
+    ports:
+      - "6002:80"
+  
+  mkcert:
+    image: aegypius/mkcert-for-nginx-proxy
+    restart: unless-stopped
+    volumes:
+    - ./certs:/app/certs:rw
+    - ~/.mozilla/firefox:/root/.mozilla/firefox:rw
+    - ~/.pki/nssdb:/root/.pki/nssdb:rw
+    - C:\Users\Alex\AppData\Local\mkcert:/usr/local/share/ca-certificates
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs
