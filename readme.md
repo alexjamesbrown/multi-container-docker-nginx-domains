@@ -15,7 +15,8 @@ This allows us to specify a `VIRTUAL_HOST` environment variable, and automatical
 **Install mkcert**  
 https://github.com/FiloSottile/mkcert
 
-Once installed, install the CA cert. Run this on cmd line:  
+Once installed, we need to create a new local CA.  
+Run this on cmd line:  
 `mkcert -install` 
 
 Now, run 
@@ -24,3 +25,22 @@ Now, run
 Now, both urls should work:
 - `https://app1.local` 
 - `https://app2.local` 
+
+
+
+## Possible Extra Step...
+I'm not 100% sure if this will work "out of the box" with the certs checked in - 
+You may need to recreate the certificates in the `/certs` folder.  
+
+To do this, ensure the containers aren't running, and delete the `/certs` dir.
+
+Then run:
+
+`mkdir certs`  
+followed by  
+
+`mkcert -key-file certs\app1.local.key -cert-file certs\app1.local.crt app1.local`
+
+`mkcert -key-file certs\app2.local.key -cert-file certs\app2.local.crt app2.local`
+
+This will create certs for app1.local and app2.local, in the `/certs` directory, which is mounted as a volume by the proxy.
