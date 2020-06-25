@@ -25,15 +25,14 @@ services:
     ports:
       - "6002:80"
   
-  mkcert:
-    image: aegypius/mkcert-for-nginx-proxy
-    restart: unless-stopped
-    volumes:
-    - ./certs:/app/certs:rw
-    - ~/.mozilla/firefox:/root/.mozilla/firefox:rw
-    - ~/.pki/nssdb:/root/.pki/nssdb:rw
-    - C:\Users\Alex\AppData\Local\mkcert:/usr/local/share/ca-certificates
-    - /var/run/docker.sock:/var/run/docker.sock:ro
+  # mkcert:
+  #   image: aegypius/mkcert-for-nginx-proxy
+  #   restart: unless-stopped
+  #   volumes:
+  #   - ./certs:/app/certs:rw
+  #   - ~/.mozilla/firefox:/root/.mozilla/firefox:rw
+  #   - ~/.pki/nssdb:/root/.pki/nssdb:rw
+  #   - /var/run/docker.sock:/var/run/docker.sock:ro
     
   nginx-proxy:
     image: jwilder/nginx-proxy
