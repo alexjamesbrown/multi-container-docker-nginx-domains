@@ -8,10 +8,16 @@ services:
       dockerfile: app1/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Pa55word
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       - VIRTUAL_HOST=app1.local
-    ports:
-      - "6001:80"
+      - VIRTUAL_PROTO=https
+
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${USERPROFILE}/.aspnet/https:/https/:ro
 
   app2:
     image: ${DOCKER_REGISTRY-}app2
@@ -20,20 +26,17 @@ services:
       dockerfile: app2/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Pa55word
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       - VIRTUAL_HOST=app2.local
-    ports:
-      - "6002:80"
-  
-  # mkcert:
-  #   image: aegypius/mkcert-for-nginx-proxy
-  #   restart: unless-stopped
-  #   volumes:
-  #   - ./certs:/app/certs:rw
-  #   - ~/.mozilla/firefox:/root/.mozilla/firefox:rw
-  #   - ~/.pki/nssdb:/root/.pki/nssdb:rw
-  #   - /var/run/docker.sock:/var/run/docker.sock:ro
-    
+      - VIRTUAL_PROTO=https
+
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${USERPROFILE}/.aspnet/https:/https/:ro
+
   nginx-proxy:
     image: jwilder/nginx-proxy
     ports:
